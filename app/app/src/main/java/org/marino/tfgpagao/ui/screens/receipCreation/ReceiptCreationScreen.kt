@@ -1,6 +1,5 @@
 package org.marino.tfgpagao.ui.screens.receipCreation
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -56,7 +55,6 @@ import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -71,7 +69,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.marino.tfgpagao.R
 import org.marino.tfgpagao.ui.model.MemberReceiptVO
-import org.marino.tfgpagao.ui.screens.groupCreation.Error
+import org.marino.tfgpagao.ui.screens.common.components.Error
 
 @Composable
 fun ReceiptCreationScreen(
@@ -232,15 +230,6 @@ fun ReceiptCreationScreen(
                 }
             }
         )
-    }
-}
-
-@Composable
-fun Error(error: String, errorCaught: () -> Unit) {
-    val context = LocalContext.current
-    if (error.isNotEmpty()) {
-        Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
-        errorCaught()
     }
 }
 

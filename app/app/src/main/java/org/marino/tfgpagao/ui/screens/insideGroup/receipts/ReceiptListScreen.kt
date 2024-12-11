@@ -1,13 +1,11 @@
 package org.marino.tfgpagao.ui.screens.insideGroup.receipts
 
 import android.annotation.SuppressLint
-import android.widget.Toast
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,7 +26,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,6 +33,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.marino.tfgpagao.R
 import org.marino.tfgpagao.domain.model.Receipt
+import org.marino.tfgpagao.ui.screens.common.components.Error
+
 
 @Composable
 fun ReceiptListScreen(
@@ -85,15 +84,6 @@ fun ReceiptListScreen(
                 ButtonCreateReceipt(goReceiptCreation, groupId)
             },
         )
-    }
-}
-
-@Composable
-fun Error(error: String, errorCaught: () -> Unit) {
-    val context = LocalContext.current
-    if (error.isNotEmpty()) {
-        Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
-        errorCaught()
     }
 }
 
@@ -156,7 +146,11 @@ fun ItemsReceipt(
 fun ButtonCreateReceipt(
     goReceiptCreation: (Int) -> Unit, groupId: Int
 ) {
-    FloatingActionButton(onClick = { goReceiptCreation(groupId) }, containerColor = Color(0xFFA06E1D), contentColor = Color.Black) {
+    FloatingActionButton(
+        onClick = { goReceiptCreation(groupId) },
+        containerColor = Color(0xFFA06E1D),
+        contentColor = Color.Black
+    ) {
         Icon(
             painter = painterResource(R.drawable.ic_add_receipt_png),
             modifier = Modifier.size(30.dp),

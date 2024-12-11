@@ -45,7 +45,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.marino.tfgpagao.R
 import org.marino.tfgpagao.ui.model.ParticipationVO
-import org.marino.tfgpagao.ui.screens.groupCreation.Error
+import org.marino.tfgpagao.ui.screens.common.components.Error
 
 @Composable
 fun ReceiptInfoScreen(
@@ -204,8 +204,13 @@ fun ParticipationList(participations: List<ParticipationVO>) {
                                 .background(Color(0xFC454545)),
                             contentAlignment = Alignment.Center
                         ) {
+                            val formattedTotalPays = if (participation.pays % 1 == 0.0) {
+                                String.format("%.0f", participation.pays)
+                            } else {
+                                String.format("%.2f", participation.pays)
+                            }
                             Text(
-                                participation.pays.toString() + " €",
+                                "$formattedTotalPays €",
                                 color = Color.Green,
                             )
                         }
@@ -245,8 +250,13 @@ fun ParticipationList(participations: List<ParticipationVO>) {
                                 .background(Color(0xFC454545)),
                             contentAlignment = Alignment.Center
                         ) {
+                            val formattedTotalDebts = if (participation.debts % 1 == 0.0) {
+                                String.format("%.0f", participation.debts)
+                            } else {
+                                String.format("%.2f", participation.debts)
+                            }
                             Text(
-                                participation.debts.toString() + " €",
+                                "$formattedTotalDebts €",
                                 color = Color.Red,
                             )
                         }

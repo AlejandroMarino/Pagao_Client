@@ -1,6 +1,5 @@
 package org.marino.tfgpagao.ui.screens.groupCreation
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -37,29 +36,24 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.marino.tfgpagao.R
 import org.marino.tfgpagao.ui.model.MemberVO
+import org.marino.tfgpagao.ui.screens.common.components.Error
 
 @Composable
 fun GroupCreationScreen(
@@ -145,15 +139,6 @@ fun GroupCreationScreen(
                 }
             }
         )
-    }
-}
-
-@Composable
-fun Error(error: String, errorCaught: () -> Unit) {
-    val context = LocalContext.current
-    if (error.isNotEmpty()) {
-        Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
-        errorCaught()
     }
 }
 
@@ -391,133 +376,5 @@ fun MembersIntroduction(
                 }
             }
         }
-    }
-}
-
-@Preview
-@Composable
-fun Cosas() {
-    var members by remember { mutableStateOf("") }
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-    ) {
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(color = Color.Gray)
-                .padding(start = 8.dp)
-        ) {
-            val isValid = members.isNotEmpty()
-            val dotColor = when {
-                isValid -> Color.Green
-                else -> Color.Red
-            }
-            Box(
-                modifier = Modifier
-                    .size(30.dp)
-//                    .background(color = dotColor, shape = CircleShape)
-                    .align(Alignment.CenterVertically)
-//                    .padding(horizontal = 8.dp)
-            ) {
-                if (isValid) {
-                    Icon(
-                        Icons.Default.CheckCircle,
-                        contentDescription = "valid",
-                        tint = dotColor,
-                        modifier = Modifier
-                            .size(24.dp)
-                            .align(Alignment.Center)
-                    )
-                } else {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_circled_x),
-                        contentDescription = "invalid",
-                        tint = dotColor,
-                        modifier = Modifier
-                            .size(24.dp)
-                            .align(Alignment.Center)
-                    )
-                }
-            }
-            TextField(
-                value = members,
-                onValueChange = { newValue ->
-                    if (newValue.length <= 20) {
-                        members = newValue
-                    }
-                },
-//                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-//                keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
-                singleLine = true,
-                modifier = Modifier
-                    .weight(5f)
-                    .padding(bottom = 0.dp)
-                    .padding(start = 8.dp),
-                colors = TextFieldDefaults.colors(
-                    unfocusedContainerColor = Color.Gray,
-                    focusedContainerColor = Color.LightGray,
-                    focusedIndicatorColor = Color.Black,
-                    unfocusedIndicatorColor = Color.Black,
-                    focusedTextColor = Color.Black,
-                    unfocusedTextColor = Color.Black,
-                ),
-            )
-            IconButton(
-                onClick = { },
-                modifier = Modifier
-                    .size(24.dp)
-                    .align(Alignment.CenterVertically)
-                    .weight(1f)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete member",
-                    tint = Color.Black,
-                )
-            }
-
-        }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .offset(y = (-2).dp)
-        ) {
-            HorizontalDivider(
-                color = Color.Black,
-                thickness = 2.dp,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .offset(y = (-6).dp)
-        ) {
-            Button(
-                onClick = { },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 0.dp),
-                colors = ButtonColors(
-                    containerColor = Color.Gray,
-                    contentColor = Color.Black,
-                    disabledContentColor = Color.Black,
-                    disabledContainerColor = Color.LightGray
-                ),
-                shape = RoundedCornerShape(
-                    topStart = 0.dp,
-                    topEnd = 0.dp,
-                    bottomEnd = 20.dp,
-                    bottomStart = 20.dp
-                )
-            ) {
-                Text("Add Member")
-            }
-        }
-
     }
 }

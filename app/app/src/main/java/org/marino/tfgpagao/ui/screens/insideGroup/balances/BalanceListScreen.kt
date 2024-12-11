@@ -1,6 +1,5 @@
 package org.marino.tfgpagao.ui.screens.insideGroup.balances
 
-import android.widget.Toast
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -37,7 +36,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -46,7 +44,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.marino.tfgpagao.R
 import org.marino.tfgpagao.domain.model.Member
-import org.marino.tfgpagao.ui.screens.insideGroup.receipts.Error
+import org.marino.tfgpagao.ui.screens.common.components.Error
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -122,15 +120,6 @@ fun BalanceListScreen(
                 }
             )
         }
-    }
-}
-
-@Composable
-fun Error(error: String, errorCaught: () -> Unit) {
-    val context = LocalContext.current
-    if (error.isNotEmpty()) {
-        Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
-        errorCaught()
     }
 }
 

@@ -457,12 +457,17 @@ class ReceiptCreationViewModel @Inject constructor(
                     val index = participations.indexOf(participation)
                     participations[index] = updatedParticipation
                 } else {
+                    val description: String = if (debtor.description.isBlank()) {
+                        ""
+                    } else {
+                        ("Debts: " + debtor.description)
+                    }
                     member?.let {
                         participations.add(
                             Participation(
                                 memberId = member.id,
                                 receiptId = 0,
-                                description = "Debts: " + debtor.description,
+                                description = description,
                                 pays = 0.0,
                                 debts = debtor.amount
                             )

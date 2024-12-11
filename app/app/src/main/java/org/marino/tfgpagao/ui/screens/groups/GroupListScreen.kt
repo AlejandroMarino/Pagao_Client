@@ -1,6 +1,5 @@
 package org.marino.tfgpagao.ui.screens.groups
 
-import android.widget.Toast
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
@@ -26,7 +25,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
@@ -37,6 +35,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.marino.tfgpagao.R
 import org.marino.tfgpagao.domain.model.Group
+import org.marino.tfgpagao.ui.screens.common.components.Error
 
 @Composable
 fun GroupListScreen(
@@ -114,15 +113,6 @@ fun GroupListScreen(
             }
 
         )
-    }
-}
-
-@Composable
-fun Error(error: String, errorCaught: () -> Unit) {
-    val context = LocalContext.current
-    if (error.isNotEmpty()) {
-        Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
-        errorCaught()
     }
 }
 
