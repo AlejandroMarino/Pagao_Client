@@ -1,6 +1,8 @@
 package org.marino.tfgpagao.data.remote
 
 
+import com.google.gson.Gson
+import okhttp3.ResponseBody
 import org.marino.tfgpagao.utils.NetworkResult
 import retrofit2.Response
 
@@ -35,7 +37,12 @@ abstract class BaseApiResponse {
                     NetworkResult.SuccessNoData()
                 }
             }
-            return error("${response.code()} ${response.message()}")
+            val errorMessage = if (response.code() == 401) {
+                "Session Expired"
+            } else {
+                parseErrorMessage(response.errorBody())
+            }
+            return error(errorMessage)
         } catch (e: Exception) {
             return error(e.message ?: e.toString())
         }
@@ -54,13 +61,27 @@ abstract class BaseApiResponse {
                     NetworkResult.SuccessNoData()
                 }
             }
-            return error("${response.code()} ${response.message()}")
+            val errorMessage = if (response.code() == 401) {
+                "Session Expired"
+            } else {
+                parseErrorMessage(response.errorBody())
+            }
+            return error(errorMessage)
         } catch (e: Exception) {
             error(e.message ?: e.toString())
         }
     }
 
+    private fun parseErrorMessage(errorBody: ResponseBody?): String {
+        return try {
+            val errorResponse = Gson().fromJson(errorBody?.string(), ErrorResponse::class.java)
+            errorResponse.message ?: "Unknown error"
+        } catch (e: Exception) {
+            "Failed to parse error message"
+        }
+    }
+
     private fun <T> error(errorMessage: String): NetworkResult<T> =
-        NetworkResult.Error("Api call failed $errorMessage")
+        NetworkResult.Error(errorMessage)
 
 }
