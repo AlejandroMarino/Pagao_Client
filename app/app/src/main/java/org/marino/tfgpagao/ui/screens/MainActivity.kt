@@ -15,7 +15,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             TfgPagaoTheme {
                 Surface {
-                    Navigation()
+                    Navigation(this)
                 }
             }
         }

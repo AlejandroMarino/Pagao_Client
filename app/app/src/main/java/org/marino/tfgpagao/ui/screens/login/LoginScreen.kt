@@ -1,7 +1,6 @@
 package org.marino.tfgpagao.ui.screens.login
 
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -23,14 +22,13 @@ import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import org.marino.tfgpagao.R
 import org.marino.tfgpagao.ui.screens.common.components.CustomButton
 import org.marino.tfgpagao.ui.screens.common.components.CustomTextField
+import org.marino.tfgpagao.ui.screens.common.components.Logo
 import org.marino.tfgpagao.ui.screens.groupCreation.Error
 
 @Composable
@@ -106,15 +104,6 @@ fun Error(error: String, errorCaught: () -> Unit) {
         Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
         errorCaught()
     }
-}
-
-@Composable
-fun Logo() {
-    Image(
-        painter = painterResource(R.drawable.iconpagao),
-        contentDescription = "Logo",
-        modifier = Modifier.padding(vertical = 50.dp)
-    )
 }
 
 @Composable

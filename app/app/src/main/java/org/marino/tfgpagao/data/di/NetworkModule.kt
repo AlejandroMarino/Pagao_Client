@@ -18,10 +18,19 @@ import org.marino.tfgpagao.network.services.ParticipationService
 import org.marino.tfgpagao.network.services.ReceiptService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Qualifier
 
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
+
+    @Qualifier
+    @Retention(AnnotationRetention.BINARY)
+    annotation class AuthInterceptorQualifier
+
+    @Qualifier
+    @Retention(AnnotationRetention.BINARY)
+    annotation class TokenRefreshingInterceptorQualifier
 
     @Provides
     fun provideHTTPLoggingInterceptor(): HttpLoggingInterceptor {
@@ -30,6 +39,7 @@ object NetworkModule {
         return interceptor
     }
 
+    @AuthInterceptorQualifier
     @Provides
     fun provideAuthInterceptor(dataStoreManager: DataStoreManager): Interceptor {
         return Interceptor { chain ->
@@ -45,18 +55,45 @@ object NetworkModule {
                 chain.request()
             }
 
-            chain.proceed(request)
+            val response = chain.proceed(request)
+
+            if (response.code == 401) {
+                runBlocking {
+                    dataStoreManager.clearAuthToken()
+                }
+            }
+
+            response
+        }
+    }
+
+    @TokenRefreshingInterceptorQualifier
+    @Provides
+    fun provideTokenRefreshingInterceptor(dataStoreManager: DataStoreManager): Interceptor {
+        return Interceptor { chain ->
+            val response = chain.proceed(chain.request())
+
+            val newToken = response.header("Authorization")
+            if (!newToken.isNullOrBlank()) {
+                runBlocking {
+                    dataStoreManager.saveAuthToken(newToken)
+                }
+            }
+
+            response
         }
     }
 
     @Provides
     fun provideOkHttpClient(
         loggingInterceptor: HttpLoggingInterceptor,
-        authInterceptor: Interceptor
+        @AuthInterceptorQualifier authInterceptor: Interceptor,
+        @TokenRefreshingInterceptorQualifier tokenRefreshingInterceptor: Interceptor
     ): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
             .addInterceptor(authInterceptor)
+            .addInterceptor(tokenRefreshingInterceptor)
             .build()
     }
 

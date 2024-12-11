@@ -3,7 +3,6 @@ package org.marino.tfgpagao.ui.screens.groups
 import android.widget.Toast
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,6 +42,7 @@ import org.marino.tfgpagao.domain.model.Group
 fun GroupListScreen(
     goGroupInfo: (Int, String) -> Unit,
     goGroupCreation: () -> Unit,
+    logout: () -> Unit,
     viewModel: GroupListViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
@@ -60,6 +60,14 @@ fun GroupListScreen(
                         .padding(16.dp)
                         .fillMaxSize()
                 ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_logout_24),
+                        contentDescription = "Logout",
+                        tint = Color(0xFF9C3636),
+                        modifier = Modifier.clickable {
+                            logout()
+                        }
+                    )
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -169,7 +177,11 @@ fun ItemsGroup(
 fun ButtonCreateGroup(
     goGroupCreation: () -> Unit
 ) {
-    FloatingActionButton(onClick = { goGroupCreation() }, containerColor = Color(0xFFA06E1D), contentColor = Color.Black) {
+    FloatingActionButton(
+        onClick = { goGroupCreation() },
+        containerColor = Color(0xFFA06E1D),
+        contentColor = Color.Black
+    ) {
         Icon(
             painter = painterResource(R.drawable.ic_add_group_png),
             modifier = Modifier.size(30.dp),

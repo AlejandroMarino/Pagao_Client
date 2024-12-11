@@ -1,11 +1,24 @@
 package org.marino.tfgpagao.ui.screens.common
 
+import android.content.Context
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import org.marino.tfgpagao.data.local.DataStoreManager
+import org.marino.tfgpagao.ui.screens.SplashScreen
 import org.marino.tfgpagao.ui.screens.groupCreation.GroupCreationScreen
 import org.marino.tfgpagao.ui.screens.groups.GroupListScreen
 import org.marino.tfgpagao.ui.screens.insideGroup.GroupInfoScreen
@@ -15,12 +28,46 @@ import org.marino.tfgpagao.ui.screens.receiptInfo.ReceiptInfoScreen
 import org.marino.tfgpagao.ui.screens.register.RegisterScreen
 
 @Composable
-fun Navigation() {
+fun Navigation(context: Context) {
     val navController = rememberNavController()
+    val dataStoreManager = DataStoreManager(context)
+    val authToken by dataStoreManager.getAuthToken.collectAsState(initial = null)
+    var isFirstLoad by remember { mutableStateOf(true) }
+    var previousTokenWasValid by remember { mutableStateOf(false) }
+
+    LaunchedEffect(authToken) {
+        if (!authToken.isNullOrBlank() != previousTokenWasValid || isFirstLoad) {
+            if (isFirstLoad) {
+                delay(1000)
+            }
+            isFirstLoad = false
+            if (authToken.isNullOrBlank()) {
+                previousTokenWasValid = false
+                navController.popBackStack()
+                navController.navigate("login") {
+                    popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                    launchSingleTop = true
+                }
+            } else {
+                previousTokenWasValid = true
+                navController.popBackStack()
+                navController.navigate("groupList") {
+                    popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                    launchSingleTop = true
+                }
+            }
+        }
+    }
+
     NavHost(
         navController = navController,
-        startDestination = "login",
+        startDestination = "splash",
     ) {
+        composable(
+            "splash"
+        ) {
+            SplashScreen()
+        }
         composable(
             "login"
         ) {
@@ -30,9 +77,10 @@ fun Navigation() {
                 },
                 goGroups = {
                     navController.navigate("groupList") {
-                        popUpTo("groupList") {
+                        popUpTo("login") {
                             inclusive = true
                         }
+                        launchSingleTop = true
                     }
                 }
             )
@@ -64,7 +112,12 @@ fun Navigation() {
         ) {
             GroupListScreen(
                 goGroupInfo = { id, groupName -> navController.navigate("groupInfo/$id/${groupName}") },
-                goGroupCreation = { navController.navigate("groupCreation") }
+                goGroupCreation = { navController.navigate("groupCreation") },
+                logout = {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        dataStoreManager.clearAuthToken()
+                    }
+                }
             )
         }
         composable(
