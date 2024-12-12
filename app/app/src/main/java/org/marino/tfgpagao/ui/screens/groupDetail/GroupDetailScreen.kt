@@ -159,7 +159,7 @@ fun MemberList(members: List<Member>) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             modifier = Modifier
-                .padding(10.dp)
+                .padding(horizontal = 30.dp, vertical = 5.dp)
                 .padding(top = 15.dp),
             textAlign = TextAlign.Center,
             fontFamily = FontFamily.Serif,

@@ -308,6 +308,7 @@ fun TextTitleOfFields(text: String, modifier: Modifier) {
         textAlign = TextAlign.Center,
         fontFamily = FontFamily.Serif,
         fontSize = 30.sp,
+        lineHeight = 35.sp,
         text = text
     )
 }
