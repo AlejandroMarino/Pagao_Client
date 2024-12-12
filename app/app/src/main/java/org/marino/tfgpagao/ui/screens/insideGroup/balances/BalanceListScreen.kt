@@ -225,7 +225,7 @@ fun TransactionItem(
         String.format("%.0f", receiver.balance)
     } else {
         String.format("%.2f", receiver.balance)
-    }
+    }.replace(",", ".")
 
     Row(
         verticalAlignment = Alignment.CenterVertically,

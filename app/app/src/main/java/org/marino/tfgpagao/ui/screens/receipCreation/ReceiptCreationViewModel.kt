@@ -109,6 +109,7 @@ class ReceiptCreationViewModel @Inject constructor(
     }
 
     private fun loadMembersOfGroup(groupId: Int, payerId: Int, receiverId: Int, amount: Double) {
+        val formatedAmount = Math.round(amount * 100) / 100.0
         viewModelScope.launch {
             getMembersOfGroup.invoke(groupId).collect { result ->
                 if (Utils.hasInternetConnection(stringProvider.context)) {
@@ -134,8 +135,8 @@ class ReceiptCreationViewModel @Inject constructor(
                             }
                             setUpPayers()
                             setUpDebtors()
-                            if (payerId > 0 && receiverId > 0 && amount > 0) {
-                                setupPredefined(payerId, receiverId, amount)
+                            if (payerId > 0 && receiverId > 0 && formatedAmount > 0) {
+                                setupPredefined(payerId, receiverId, formatedAmount)
                             }
                         }
 

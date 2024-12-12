@@ -106,7 +106,6 @@ class ReceiptInfoViewModel @Inject constructor(
                             }
                         }
                     }
-
                 }
             }
         }

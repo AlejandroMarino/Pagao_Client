@@ -20,6 +20,7 @@ import kotlinx.coroutines.launch
 import org.marino.tfgpagao.data.local.DataStoreManager
 import org.marino.tfgpagao.ui.screens.SplashScreen
 import org.marino.tfgpagao.ui.screens.groupCreation.GroupCreationScreen
+import org.marino.tfgpagao.ui.screens.groupDetail.GroupDetailScreen
 import org.marino.tfgpagao.ui.screens.groups.GroupListScreen
 import org.marino.tfgpagao.ui.screens.insideGroup.GroupInfoScreen
 import org.marino.tfgpagao.ui.screens.login.LoginScreen
@@ -142,6 +143,28 @@ fun Navigation(context: Context) {
             )
         }
         composable(
+            "groupDetail/{groupId}",
+            arguments = listOf(
+                navArgument("groupId") {
+                    type = NavType.IntType
+                    defaultValue = 0
+                }
+            )
+        ) {
+            val groupId = it.arguments?.getInt("groupId") ?: 0
+            GroupDetailScreen(
+                groupId,
+                {
+                    TopBar(
+                        goBack = {
+                            navController.popBackStack()
+                        },
+                        title = "Group Info",
+                    )
+                }
+            )
+        }
+        composable(
             "groupInfo/{groupId}/{groupName}",
             arguments = listOf(
                 navArgument("groupId") {
@@ -171,7 +194,10 @@ fun Navigation(context: Context) {
                     goBack = {
                         navController.popBackStack()
                     },
-                    title = groupName
+                    title = groupName,
+                    rightAction = {
+                        navController.navigate("groupDetail/$groupId")
+                    }
                 )
             }
         }
