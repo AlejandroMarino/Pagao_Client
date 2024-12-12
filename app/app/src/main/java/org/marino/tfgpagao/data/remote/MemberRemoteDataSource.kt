@@ -1,5 +1,6 @@
 package org.marino.tfgpagao.data.remote
 
+import org.marino.tfgpagao.data.remote.responses.BaseApiResponse
 import org.marino.tfgpagao.domain.model.Member
 import org.marino.tfgpagao.network.services.MemberService
 import org.marino.tfgpagao.utils.NetworkResult

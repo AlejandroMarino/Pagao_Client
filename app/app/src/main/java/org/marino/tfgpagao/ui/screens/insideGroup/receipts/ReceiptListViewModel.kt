@@ -75,14 +75,8 @@ class ReceiptListViewModel @Inject constructor(
                         }
                     }
                 } else {
-                    when (result) {
-                        is NetworkResult.Error -> _state.update {
-                            it.copy(isLoading = false, error = "No internet connection")
-                        }
-
-                        else -> _state.update {
-                            it.copy(receipts = result.data ?: emptyList(), isLoading = false)
-                        }
+                    _state.update {
+                        it.copy(isLoading = false, error = "No internet connection")
                     }
                 }
             }

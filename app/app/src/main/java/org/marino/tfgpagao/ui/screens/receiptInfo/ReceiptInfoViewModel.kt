@@ -147,26 +147,8 @@ class ReceiptInfoViewModel @Inject constructor(
                         }
                     }
                 } else {
-                    when (result) {
-                        is NetworkResult.Error -> _state.update {
-                            it.copy(isLoading = false, error = "No internet connection")
-                        }
-
-                        else -> {
-                            val participations = result.data?.map {
-                                ParticipationVO(
-                                    getMemberName(it.memberId),
-                                    it.description,
-                                    it.pays,
-                                    it.debts
-                                )
-                            }
-                            if (!participations.isNullOrEmpty()) {
-                                _state.update {
-                                    it.copy(isLoading = false, participations = participations)
-                                }
-                            }
-                        }
+                    _state.update {
+                        it.copy(isLoading = false, error = "No internet connection")
                     }
                 }
             }

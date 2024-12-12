@@ -1,4 +1,4 @@
-package org.marino.tfgpagao.data.remote
+package org.marino.tfgpagao.data.remote.responses
 
 
 import com.google.gson.Gson
