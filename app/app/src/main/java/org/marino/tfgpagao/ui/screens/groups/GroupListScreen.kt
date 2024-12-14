@@ -14,14 +14,20 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -45,9 +51,12 @@ fun GroupListScreen(
     viewModel: GroupListViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
+    var showDialog by remember { mutableStateOf(false) }
+
     LaunchedEffect(key1 = true) {
         viewModel.handleEvent(GroupListEvent.GetGroups)
     }
+
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -64,7 +73,7 @@ fun GroupListScreen(
                         contentDescription = "Logout",
                         tint = Color(0xFF9C3636),
                         modifier = Modifier.clickable {
-                            logout()
+                            showDialog = true
                         }
                     )
                     Box(
@@ -96,6 +105,42 @@ fun GroupListScreen(
                             Modifier.weight(2f),
                             groups = state.value.groups,
                             goGroupInfo
+                        )
+                    }
+                    if (showDialog) {
+                        AlertDialog(
+                            onDismissRequest = {
+                                showDialog = false
+                            },
+                            title = {
+                                Text(
+                                    "You are about to logout",
+                                    Modifier.fillMaxWidth(),
+                                    textAlign = TextAlign.Center
+                                )
+                            },
+                            text = {
+                                Text(
+                                    "Are you sure?",
+                                    modifier = Modifier.fillMaxWidth(),
+                                    textAlign = TextAlign.Center
+                                )
+                            },
+                            confirmButton = {
+                                TextButton(onClick = {
+                                    showDialog = false
+                                    logout()
+                                }) {
+                                    Text("Logout", color = Color(0xFFA06E1D))
+                                }
+                            },
+                            dismissButton = {
+                                TextButton(onClick = {
+                                    showDialog = false
+                                }) {
+                                    Text("Cancel", color = Color(0xFF9C3636))
+                                }
+                            }
                         )
                     }
                 }

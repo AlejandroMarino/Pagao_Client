@@ -135,7 +135,11 @@ fun ItemsReceipt(
                 String.format("%.2f", receipt.totalPaid)
             }
             Text(
-                text = "$formattedTotal €",
+                text = if (receipt.totalPaid != null) {
+                    "$formattedTotal €"
+                } else {
+                    ""
+                },
             )
         }
     }
