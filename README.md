@@ -1,4 +1,8 @@
-<img src="" alt="Pagao Logo" style="display: block; margin: 0 auto; background-color: white; max-height: 200px; padding: 20px; width: 100%; object-fit: contain;"/>
+<p align="center">
+    <img src="https://github.com/user-attachments/assets/75ad16b4-3741-4c84-a604-b6a93439d4d0" 
+         alt="Pagao Logo" 
+         style="width: 200px; object-fit: contain;"/>
+</p>
 
 # Pagao
 
