@@ -12,4 +12,4 @@ Pagao is a payment management application between friends.
 
 Download the latest version of the app on the next link:
 
-[![Descargar APK](https://img.shields.io/badge/Descargar-APK-green)](https://github.com/AlejandroMarino/Pagao_Client/releases/tag/v1.0.0)
+[![Descargar APK](https://img.shields.io/badge/Download-APK-green)](https://github.com/AlejandroMarino/Pagao_Client/releases/tag/v1.0.0)
