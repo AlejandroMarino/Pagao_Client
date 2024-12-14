@@ -1,3 +1,5 @@
+<img src="" alt="Pagao Logo" style="display: block; margin: 0 auto; background-color: white; max-height: 200px; padding: 20px; width: 100%; object-fit: contain;"/>
+
 # Pagao
 
 Pagao is a payment management application between friends.
