@@ -19,6 +19,14 @@ class MemberRepository @Inject constructor(private val memberRemoteDataSource: M
         }.flowOn(Dispatchers.IO)
     }
 
+    fun fetchMembersAvailableOfGroup(groupId: Int): Flow<NetworkResult<List<Member>>> {
+        return flow {
+            emit(NetworkResult.Loading())
+            val result = memberRemoteDataSource.fetchMembersAvailableOfGroup(groupId)
+            emit(result)
+        }.flowOn(Dispatchers.IO)
+    }
+
     fun fetchMember(id: Int): Flow<NetworkResult<Member>> {
         return flow {
             emit(NetworkResult.Loading())
@@ -39,6 +47,14 @@ class MemberRepository @Inject constructor(private val memberRemoteDataSource: M
         return flow {
             emit(NetworkResult.Loading())
             val result = memberRemoteDataSource.addMember(member)
+            emit(result)
+        }.flowOn(Dispatchers.IO)
+    }
+
+    fun setUserToMember(id: Int): Flow<NetworkResult<Void>> {
+        return flow {
+            emit(NetworkResult.Loading())
+            val result = memberRemoteDataSource.setUserToMember(id)
             emit(result)
         }.flowOn(Dispatchers.IO)
     }

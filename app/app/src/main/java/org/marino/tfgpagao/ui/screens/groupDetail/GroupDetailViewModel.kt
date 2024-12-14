@@ -47,8 +47,9 @@ class GroupDetailViewModel @Inject constructor(
 
     private fun loadGroup(idGroup: Int) {
         viewModelScope.launch {
-            getGroup.invoke(idGroup).collect { result ->
-                if (Utils.hasInternetConnection(stringProvider.context)) {
+
+            if (Utils.hasInternetConnection(stringProvider.context)) {
+                getGroup.invoke(idGroup).collect { result ->
                     when (result) {
                         is NetworkResult.Error -> {
                             _state.update {
@@ -81,10 +82,10 @@ class GroupDetailViewModel @Inject constructor(
                             it.copy(isLoading = false)
                         }
                     }
-                } else {
-                    _state.update {
-                        it.copy(isLoading = false, error = "No internet connection")
-                    }
+                }
+            } else {
+                _state.update {
+                    it.copy(isLoading = false, error = "No internet connection")
                 }
             }
         }
@@ -92,8 +93,9 @@ class GroupDetailViewModel @Inject constructor(
 
     private fun setupMembers(idGroup: Int) {
         viewModelScope.launch {
-            getMembersOfGroup.invoke(idGroup).collect { result ->
-                if (Utils.hasInternetConnection(stringProvider.context)) {
+
+            if (Utils.hasInternetConnection(stringProvider.context)) {
+                getMembersOfGroup.invoke(idGroup).collect { result ->
                     when (result) {
                         is NetworkResult.Error -> {
                             _state.update {
@@ -118,10 +120,10 @@ class GroupDetailViewModel @Inject constructor(
                             it.copy(isLoading = false)
                         }
                     }
-                } else {
-                    _state.update {
-                        it.copy(isLoading = false, error = "No internet connection")
-                    }
+                }
+            } else {
+                _state.update {
+                    it.copy(isLoading = false, error = "No internet connection")
                 }
             }
         }

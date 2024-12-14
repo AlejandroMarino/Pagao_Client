@@ -5,6 +5,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -12,6 +13,9 @@ interface MemberService {
 
     @GET("members/of_group")
     suspend fun getMembersOfGroup(@Query("group") group: Int): Response<List<Member>>
+
+    @GET("members/available_of_group")
+    suspend fun getMembersAvailableOfGroup(@Query("group") group: Int): Response<List<Member>>
 
     @GET("members/{id}")
     suspend fun getMember(@Path("id") id: Int): Response<Member>
@@ -21,4 +25,7 @@ interface MemberService {
 
     @POST("members")
     suspend fun add(@Body member: Member): Response<Void>
+
+    @PUT("members/{id}/set_user")
+    suspend fun setUserToMember(@Path("id") id: Int): Response<Void>
 }

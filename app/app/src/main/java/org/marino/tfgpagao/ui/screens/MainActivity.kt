@@ -15,7 +15,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             TfgPagaoTheme {
                 Surface {
-                    Navigation(this)
+                    val isOpenedByLink = intent?.data != null
+                    Navigation(this, isOpenedByLink)
                 }
             }
         }

@@ -1,10 +1,6 @@
-package org.marino.tfgpagao.ui.screens.groupDetail
+package org.marino.tfgpagao.ui.screens.groupJoin
 
-import android.graphics.Bitmap
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -20,63 +15,45 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.google.zxing.BarcodeFormat
-import com.journeyapps.barcodescanner.BarcodeEncoder
 import org.marino.tfgpagao.R
 import org.marino.tfgpagao.domain.model.Member
 import org.marino.tfgpagao.ui.screens.common.components.Error
-import org.marino.tfgpagao.ui.screens.receiptInfo.TextTitleOfFields
+import org.marino.tfgpagao.ui.screens.groupDetail.GroupInfo
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GroupDetailScreen(
+fun GroupJoinScreen(
     groupId: Int,
-    topBar: @Composable () -> Unit,
-    viewModel: GroupDetailViewModel = hiltViewModel()
+    goGroups: () -> Unit,
+    viewModel: GroupJoinViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
 
-    var isBottomSheetVisible by remember { mutableStateOf(false) }
-
-    fun generateQRCode(content: String): Bitmap {
-        val barcodeEncoder = BarcodeEncoder()
-        return barcodeEncoder.encodeBitmap(content, BarcodeFormat.QR_CODE, 500, 500)
-    }
-
     LaunchedEffect(key1 = true) {
-        viewModel.handleEvent(GroupDetailEvent.LoadGroup(groupId))
+        viewModel.handleEvent(GroupJoinEvent.LoadGroup(groupId))
     }
 
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
         Scaffold(
-            topBar = topBar,
             content = {
                 if (state.value.isLoading) {
                     Box(modifier = Modifier.fillMaxSize()) {
@@ -96,39 +73,32 @@ fun GroupDetailScreen(
                         Content(
                             state.value.group.name,
                             state.value.group.description,
-                            state.value.members
-                        )
+                            state.value.members,
+                            state.value.availableMembers,
+                            state.value.selectedMember
+                        ) { member -> viewModel.handleEvent(GroupJoinEvent.SelectMember(member)) }
                     }
                 }
                 state.value.error?.let { it1 ->
                     Error(
                         it1
-                    ) { viewModel.handleEvent(GroupDetailEvent.ErrorCatch) }
+                    ) { viewModel.handleEvent(GroupJoinEvent.ErrorCatch) }
                 }
             },
             floatingActionButton = {
-                if (!isBottomSheetVisible) {
-                    FloatingActionButton(
-                        onClick = { isBottomSheetVisible = true },
-                        containerColor = Color(0xFFA06E1D),
-                        contentColor = Color.Black
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_add_user_24),
-                            contentDescription = "Invite user"
-                        )
-                    }
+                FloatingActionButton(
+                    onClick = { viewModel.handleEvent(GroupJoinEvent.JoinGroup(goGroups)) },
+                    containerColor = Color(0xFFA06E1D),
+                    contentColor = Color.Black
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_add_user_24),
+                        modifier = Modifier.size(30.dp),
+                        contentDescription = "Create group"
+                    )
                 }
             }
         )
-        if (isBottomSheetVisible) {
-            ModalBottomSheet(
-                onDismissRequest = { isBottomSheetVisible = false },
-                content = {
-                    QRCodeBottomSheet("https://pagao/invite/$groupId") { generateQRCode(it) }
-                }
-            )
-        }
     }
 }
 
@@ -136,80 +106,25 @@ fun GroupDetailScreen(
 fun Content(
     groupName: String,
     groupDescription: String?,
-    members: List<Member>
+    members: List<Member>,
+    availableMembers: List<Member>,
+    selectedMember: Member,
+    selectMember: (Member) -> Unit
 ) {
     Column {
         GroupInfo(groupName, groupDescription, Modifier.align(Alignment.CenterHorizontally))
-        MemberList(members)
+        MemberList(members, availableMembers, selectedMember, selectMember)
     }
 }
 
-@Composable
-fun QRCodeBottomSheet(content: String, generateQR: (String) -> Bitmap) {
-    val qrCodeBitmap = remember(content) { generateQR(content) }
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight(),
-        contentAlignment = Alignment.Center
-    ) {
-        Image(
-            bitmap = qrCodeBitmap.asImageBitmap(),
-            contentDescription = "QR Code",
-            modifier = Modifier.size(200.dp)
-        )
-    }
-}
 
 @Composable
-fun GroupInfo(groupName: String, groupDescription: String?, modifier: Modifier) {
-    var isDialogOpen by remember { mutableStateOf(false) }
-    Box(
-        modifier = modifier
-            .padding(horizontal = 40.dp)
-            .padding(bottom = 20.dp)
-            .then(
-                if (!groupDescription.isNullOrBlank()) {
-                    Modifier.clickable { isDialogOpen = true }
-                } else {
-                    Modifier
-                }
-            ),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(verticalArrangement = Arrangement.Center) {
-            TextTitleOfFields(groupName, Modifier.align(Alignment.CenterHorizontally))
-            if (!groupDescription.isNullOrBlank()) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_more_24),
-                    contentDescription = "More",
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-        }
-    }
-    if (isDialogOpen) {
-        Dialog(
-            onDismissRequest = { isDialogOpen = false },
-        ) {
-            Box(
-                Modifier
-                    .padding(bottom = 100.dp)
-                    .background(Color(0x6A000000), shape = RoundedCornerShape(16.dp))
-            ) {
-                Text(
-                    groupDescription ?: "",
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .padding(horizontal = 30.dp, vertical = 20.dp)
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun MemberList(members: List<Member>) {
+fun MemberList(
+    members: List<Member>,
+    availableMembers: List<Member>,
+    selectedMember: Member,
+    selectMember: (Member) -> Unit
+) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             modifier = Modifier
@@ -229,11 +144,24 @@ fun MemberList(members: List<Member>) {
                 .sizeIn(maxHeight = 700.dp),
         ) {
             items(items = members, itemContent = { member ->
+
+                val backgroundColor = when (member) {
+                    selectedMember -> Color(0xFFA06E1D)
+                    in availableMembers -> Color.LightGray
+                    else -> Color.Gray
+                }
+
                 Card(
                     shape = RoundedCornerShape(corner = CornerSize(16.dp)),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 5.dp, vertical = 4.dp)
+                        .clickable(
+                            enabled = member in availableMembers && member != selectedMember
+                        ) {
+                            selectMember(member)
+                        },
+                    colors = CardDefaults.cardColors(backgroundColor, contentColor = Color.Black)
                 ) {
                     Text(
                         modifier = Modifier

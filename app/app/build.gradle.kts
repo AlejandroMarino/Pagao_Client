@@ -84,4 +84,7 @@ dependencies {
 
     implementation(libs.androidx.room.runtime)
     kapt(libs.androidx.room.compiler)
+
+    implementation(libs.zxing.core)
+    implementation(libs.zxing.android.embedded)
 }

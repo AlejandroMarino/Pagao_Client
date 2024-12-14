@@ -37,7 +37,7 @@ abstract class BaseApiResponse {
                     NetworkResult.SuccessNoData()
                 }
             }
-            val errorMessage = if (response.code() == 401) {
+            val errorMessage = if (response.code() == 401 || response.code() == 403) {
                 "Session Expired"
             } else {
                 parseErrorMessage(response.errorBody())
@@ -77,7 +77,7 @@ abstract class BaseApiResponse {
             val errorResponse = Gson().fromJson(errorBody?.string(), ErrorResponse::class.java)
             errorResponse.message ?: "Unknown error"
         } catch (e: Exception) {
-            "Failed to parse error message"
+            "Session expired"
         }
     }
 

@@ -13,15 +13,23 @@ class MemberRemoteDataSource @Inject constructor(private val memberService: Memb
         return safeApiCall(apiCall = { memberService.getMembersOfGroup(groupId) })
     }
 
+    suspend fun fetchMembersAvailableOfGroup(groupId: Int): NetworkResult<List<Member>> {
+        return safeApiCall(apiCall = { memberService.getMembersAvailableOfGroup(groupId) })
+    }
+
     suspend fun fetchMember(id: Int): NetworkResult<Member> {
         return safeApiCall(apiCall = { memberService.getMember(id) })
     }
 
     suspend fun getBalanceOfMember(id: Int): NetworkResult<Double> {
-        return safeApiCall(apiCall = {memberService.getMemberBalance(id)})
+        return safeApiCall(apiCall = { memberService.getMemberBalance(id) })
     }
 
     suspend fun addMember(member: Member): NetworkResult<Void> {
         return safeApiCall(apiCall = { memberService.add(member) })
+    }
+
+    suspend fun setUserToMember(id: Int): NetworkResult<Void> {
+        return safeApiCall(apiCall = { memberService.setUserToMember(id) })
     }
 }

@@ -13,6 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -21,6 +22,7 @@ import org.marino.tfgpagao.data.local.DataStoreManager
 import org.marino.tfgpagao.ui.screens.SplashScreen
 import org.marino.tfgpagao.ui.screens.groupCreation.GroupCreationScreen
 import org.marino.tfgpagao.ui.screens.groupDetail.GroupDetailScreen
+import org.marino.tfgpagao.ui.screens.groupJoin.GroupJoinScreen
 import org.marino.tfgpagao.ui.screens.groups.GroupListScreen
 import org.marino.tfgpagao.ui.screens.insideGroup.GroupInfoScreen
 import org.marino.tfgpagao.ui.screens.login.LoginScreen
@@ -29,12 +31,13 @@ import org.marino.tfgpagao.ui.screens.receiptInfo.ReceiptInfoScreen
 import org.marino.tfgpagao.ui.screens.register.RegisterScreen
 
 @Composable
-fun Navigation(context: Context) {
+fun Navigation(context: Context, isOpenedByLink: Boolean) {
     val navController = rememberNavController()
     val dataStoreManager = DataStoreManager(context)
     val authToken by dataStoreManager.getAuthToken.collectAsState(initial = null)
     var isFirstLoad by remember { mutableStateOf(true) }
     var previousTokenWasValid by remember { mutableStateOf(false) }
+    var openedLinkHasNotLoaded by remember { mutableStateOf(isOpenedByLink) }
 
     LaunchedEffect(authToken) {
         if (!authToken.isNullOrBlank() != previousTokenWasValid || isFirstLoad) {
@@ -51,10 +54,14 @@ fun Navigation(context: Context) {
                 }
             } else {
                 previousTokenWasValid = true
-                navController.popBackStack()
-                navController.navigate("groupList") {
-                    popUpTo(navController.graph.startDestinationId) { inclusive = true }
-                    launchSingleTop = true
+                if (openedLinkHasNotLoaded) {
+                    openedLinkHasNotLoaded = false
+                } else {
+                    navController.popBackStack()
+                    navController.navigate("groupList") {
+                        popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                        launchSingleTop = true
+                    }
                 }
             }
         }
@@ -161,6 +168,29 @@ fun Navigation(context: Context) {
                         },
                         title = "Group Info",
                     )
+                }
+            )
+        }
+        composable(
+            "groupJoin/{groupId}",
+            arguments = listOf(
+                navArgument("groupId") {
+                    type = NavType.IntType
+                    defaultValue = 0
+                }
+            ),
+            deepLinks = listOf(navDeepLink { uriPattern = "https://pagao/invite/{groupId}" })
+        ) {
+            val groupId = it.arguments?.getInt("groupId") ?: 0
+            GroupJoinScreen(
+                groupId,
+                {
+                    navController.navigate("groupList") {
+                        popUpTo("groupJoin/{groupId}") {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                    }
                 }
             )
         }
